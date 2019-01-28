@@ -11,8 +11,8 @@ class MagrizoApp extends StatelessWidget {
     return MaterialApp(
       title: 'Jogo da velha',
       theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 88, 181, 224),
-        backgroundColor: Color.fromARGB(255, 133, 198, 226),
+        primaryColor: Color.fromARGB(255, 13, 161, 146),
+        backgroundColor: Color.fromARGB(255, 20, 189, 172),
         brightness: Brightness.dark,
         fontFamily: 'Engcomica',
       ),
@@ -29,7 +29,7 @@ class _AnimatedLogo extends AnimatedWidget {
     final Animation<double> animation = listenable;
     return Center(
       child: new Image.asset(
-        "assets/info.png",
+        "assets/logo.png",
         width: animation.value,
         height: animation.value,
       ),

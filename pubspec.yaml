@@ -40,6 +40,7 @@ flutter:
     - assets/people.png
     - assets/person.png
     - assets/info.png
+    - assets/logo.png
 
   fonts:
     - family: Engcomica

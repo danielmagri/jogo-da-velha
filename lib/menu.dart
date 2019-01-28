@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:jogo_da_velha/game.dart';
 
 class _AnimationMenu extends StatelessWidget {
   _AnimationMenu({Key key, this.controller})
@@ -88,7 +88,9 @@ class _AnimationMenu extends StatelessWidget {
                 ]),
                 shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                 color: Theme.of(context).primaryColor,
-                onPressed: () {}),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GamePage()),);
+                }),
           ),
         ),
         Opacity(
@@ -142,7 +144,7 @@ class _AnimatedLogo extends StatelessWidget {
 
   Widget _buildAnimation(BuildContext context, Widget child) {
     return new Image.asset(
-      "assets/info.png",
+      "assets/logo.png",
       width: animation.value,
       height: animation.value,
     );
@@ -190,8 +192,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    timeDilation = 1.0;
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: new Column(
