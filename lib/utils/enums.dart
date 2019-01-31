@@ -1,0 +1,11 @@
+enum DIRECTION_WON {
+  HORIZONTAL,
+  VERTICAL,
+  DIAGONAL,
+}
+
+enum STATUS {
+  PLAYING,
+  LINE,
+  WINNER
+}

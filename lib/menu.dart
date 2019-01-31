@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jogo_da_velha/game.dart';
 
 class _AnimationMenu extends StatelessWidget {
@@ -186,12 +187,15 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _controllerLogo.dispose();
     _controllerMenu.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: new Column(

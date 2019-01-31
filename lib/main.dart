@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:jogo_da_velha/menu.dart';
 
-void main() => runApp(MagrizoApp());
+void main() {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(MagrizoApp());
+}
 
 class MagrizoApp extends StatelessWidget {
   @override
@@ -17,6 +20,7 @@ class MagrizoApp extends StatelessWidget {
         fontFamily: 'Engcomica',
       ),
       home: SplashPage(),
+      debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{'/MenuPage': (BuildContext context) => new MenuPage()},
     );
   }
