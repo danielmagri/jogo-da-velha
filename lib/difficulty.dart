@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jogo_da_velha/game.dart';
-import 'package:jogo_da_velha/difficulty.dart';
 
 class _AnimationMenu extends StatelessWidget {
   _AnimationMenu({Key key, this.controller})
@@ -58,17 +56,14 @@ class _AnimationMenu extends StatelessWidget {
         Opacity(
           opacity: opacity1.value,
           child: new Container(
-            width: 260,
-            height: 70,
-            padding: const EdgeInsets.all(8.0),
+            width: 260.0,
+            height: 75.0,
+            padding: const EdgeInsets.all(12.0),
             child: new RaisedButton(
-                child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                  new Image.asset("assets/person.png", width: 32),
-                  new Text(
-                    " Um Jogador",
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ]),
+                child: new Text(
+                  "Fácil",
+                  style: TextStyle(fontSize: 24.0),
+                ),
                 shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
@@ -83,40 +78,29 @@ class _AnimationMenu extends StatelessWidget {
           opacity: opacity2.value,
           child: new Container(
             width: 260.0,
-            height: 70.0,
-            padding: const EdgeInsets.all(8.0),
+            height: 75.0,
+            padding: const EdgeInsets.all(12.0),
             child: new RaisedButton(
-                child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                  new Image.asset("assets/people.png", width: 32),
-                  new Text(
-                    " Dois Jogadores",
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ]),
+                child: new Text(
+                  "Médio",
+                  style: TextStyle(fontSize: 24.0),
+                ),
                 shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                 color: Theme.of(context).primaryColor,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => GamePage()),
-                  );
-                }),
+                onPressed: () {}),
           ),
         ),
         Opacity(
           opacity: opacity3.value,
           child: new Container(
-            width: 260,
-            height: 70,
-            padding: const EdgeInsets.all(8.0),
+            width: 260.0,
+            height: 75.0,
+            padding: const EdgeInsets.all(12.0),
             child: new RaisedButton(
-                child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                  new Image.asset("assets/info.png", width: 32),
-                  new Text(
-                    " Sobre",
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ]),
+                child: new Text(
+                  "Impossível",
+                  style: TextStyle(fontSize: 24.0),
+                ),
                 shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {}),
@@ -135,61 +119,25 @@ class _AnimationMenu extends StatelessWidget {
   }
 }
 
-class _AnimatedLogo extends AnimatedWidget {
-  _AnimatedLogo({Key key, Animation<double> animation}) : super(key: key, listenable: animation);
-
+class DifficultyPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
-    return new Image.asset(
-      "assets/logo.png",
-      width: animation.value,
-      height: animation.value,
-    );
-  }
+  _DifficultyPageState createState() => _DifficultyPageState();
 }
 
-class MenuPage extends StatefulWidget {
-  @override
-  _MenuPageState createState() => _MenuPageState();
-}
-
-class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
+class _DifficultyPageState extends State<DifficultyPage> with TickerProviderStateMixin {
   AnimationController _controllerMenu;
-  AnimationController _controllerLogo;
-
-  Animation _animationLogo;
 
   @override
   void initState() {
     super.initState();
 
-    _controllerLogo = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     _controllerMenu = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
 
-    _animationLogo = Tween(begin: 0.0, end: 100.0).animate(
-      CurvedAnimation(
-        parent: _controllerLogo,
-        curve: Interval(
-          0.0,
-          1.0,
-          curve: Curves.easeIn,
-        ),
-      ),
-    );
-
-    _controllerLogo.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controllerMenu.forward();
-      }
-    });
-
-    _controllerLogo.forward();
+    _controllerMenu.forward();
   }
 
   @override
   void dispose() {
-    _controllerLogo.dispose();
     _controllerMenu.dispose();
     super.dispose();
   }
@@ -203,37 +151,27 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       body: new Column(
         children: <Widget>[
           new Expanded(
-            flex: 40,
+            flex: 30,
             child: new Container(
               alignment: AlignmentDirectional(0.0, 1.0),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Text(
-                    "Jogo\nda\nvelha",
-                    style: TextStyle(
-                      fontSize: 65,
-                      shadows: <Shadow>[
-                        Shadow(
-                          offset: Offset(2.0, 2.0),
-                          blurRadius: 3.0,
-                          color: Colors.black38,
-                        ),
-                      ],
+              child: new Text(
+                "Até onde você consegue chegar?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 30,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 3.0,
+                      color: Colors.black38,
                     ),
-                  ),
-                  new SizedBox(
-                    width: 100,
-                    child: _AnimatedLogo(
-                      animation: _animationLogo,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
           new Expanded(
-            flex: 60,
+            flex: 70,
             child: _AnimationMenu(
               controller: _controllerMenu.view,
             ),

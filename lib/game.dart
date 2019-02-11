@@ -18,6 +18,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   AnimationController _controllerBoard;
   AnimationController _controllerLine;
   AnimationController _controllerWinner;
+  Animation _animationBoard;
+  Animation _animationLine;
   Animation _animationWinner;
 
   STATUS _gameStatus = STATUS.PLAYING;
@@ -27,11 +29,11 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     [0, 0, 0],
     [0, 0, 0]
   ];
-  int _scoreX = 0;
-  int _scoreO = 0;
-
   int _whoStarted = 1;
   int _turn = 1; // 1 vez do X, -1 vez do O, 0 fim do jogo
+
+  int _scoreX = 0;
+  int _scoreO = 0;
 
   int _whoWon;
   int _whereWon;
@@ -44,11 +46,16 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     _controllerLine = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
     _controllerWinner = AnimationController(duration: const Duration(milliseconds: 700), vsync: this);
 
+    _animationBoard =
+        Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controllerBoard, curve: Curves.fastOutSlowIn));
+
+    _animationLine =
+        Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controllerLine, curve: Curves.fastOutSlowIn));
     _animationWinner =
         Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controllerWinner, curve: Curves.fastOutSlowIn));
 
     _controllerLine.addStatusListener((status) {
-      if(status == AnimationStatus.completed) {
+      if (status == AnimationStatus.completed) {
         setState(() {
           _gameStatus = STATUS.WINNER;
         });
@@ -57,7 +64,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     });
 
     _controllerWinner.addStatusListener((status) {
-      if(status == AnimationStatus.dismissed) {
+      if (status == AnimationStatus.dismissed) {
         setState(() {
           _gameStatus = STATUS.PLAYING;
         });
@@ -75,6 +82,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  // Reseta as variaveis para o estado inicial
   void _restartGame() {
     setState(() {
       _board = [
@@ -102,6 +110,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     }
   }
 
+  // Soma ponto no placar
   void _setPoint(int player) {
     _whoWon = player;
     _gameStatus = STATUS.LINE;
@@ -247,6 +256,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     }
   }
 
+  // Exibi a linha de vitória
   Widget _setWinLine() {
     double size = 0.0;
 
@@ -254,7 +264,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       final RenderBox renderStack = _keyGrid.currentContext.findRenderObject();
       size = renderStack.size.width;
 
-      if(_controllerLine.isCompleted) {
+      if (_controllerLine.isCompleted) {
         _controllerLine.reset();
       }
       _controllerLine.forward();
@@ -264,7 +274,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       size: size,
       whereWon: _whereWon,
       wonDirection: _directionWon,
-      controller: _controllerLine,
+      animation: _animationLine,
     );
   }
 
@@ -328,7 +338,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               Board(
                 board: _board,
                 setMove: _setMove,
-                controller: _controllerBoard,
+                animation: _animationBoard,
               ),
               _setWinLine(),
               _gameStatus == STATUS.WINNER

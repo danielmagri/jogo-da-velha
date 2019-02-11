@@ -28,19 +28,15 @@ class LinePainter extends CustomPainter {
   }
 }
 
-class Line extends StatelessWidget {
-  Line({Key key, @required this.size, this.whereWon, this.wonDirection, @required this.controller})
-      : animation =
-            Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn)),
-        super(key: key);
+class Line extends AnimatedWidget {
+  Line({Key key, @required this.size, this.whereWon, this.wonDirection, Animation<double> animation})
+      : super(key: key, listenable: animation);
 
   final double size;
   final int whereWon;
   final DIRECTION_WON wonDirection;
 
-  final Animation<double> controller;
-  final Animation<double> animation;
-
+  // Posiciona o ponto inicial da linha
   Offset getInitPosition() {
     double x = 0.0;
     double y = 0.0;
@@ -75,6 +71,7 @@ class Line extends StatelessWidget {
     return Offset(x, y);
   }
 
+  // Posiciona o ponto final da linha
   Offset getEndPosition() {
     double x = 0.0;
     double y = 0.0;
@@ -111,14 +108,11 @@ class Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (BuildContext context, Widget child) {
-        return new CustomPaint(
-          size: Size.square(size),
-          painter: size == 0.0 ? null : new LinePainter(animation.value, getInitPosition(), getEndPosition()),
-        );
-      },
+    final Animation<double> animation = listenable;
+
+    return new CustomPaint(
+      size: Size.square(size),
+      painter: size == 0.0 ? null : new LinePainter(animation.value, getInitPosition(), getEndPosition()),
     );
   }
 }
