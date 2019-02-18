@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jogo_da_velha/utils/enums.dart';
 import 'package:jogo_da_velha/game.dart';
 import 'package:jogo_da_velha/difficulty.dart';
 
@@ -98,7 +99,7 @@ class _AnimationMenu extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GamePage()),
+                    MaterialPageRoute(builder: (context) => GamePage(gameType: GAME_TYPE.TWO_PLAYERS,)),
                   );
                 }),
           ),

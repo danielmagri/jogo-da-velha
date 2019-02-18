@@ -9,3 +9,15 @@ enum STATUS {
   LINE,
   WINNER
 }
+
+enum GAME_TYPE {
+  TWO_PLAYERS,
+  EASY,
+  MEDIUM,
+  IMPOSSIBLE
+}
+
+enum WHO {
+  PLAYER,
+  COMPUTER
+}

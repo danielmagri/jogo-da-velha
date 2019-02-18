@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jogo_da_velha/utils/enums.dart';
+import 'package:jogo_da_velha/models/coordenate.dart';
 import 'package:jogo_da_velha/widgets/x.dart';
 import 'package:jogo_da_velha/widgets/o.dart';
 import 'package:jogo_da_velha/widgets/board.dart';
 import 'package:jogo_da_velha/widgets/line.dart';
 import 'package:jogo_da_velha/widgets/winner.dart';
+import 'package:jogo_da_velha/computer/computerAI.dart';
 
 class GamePage extends StatefulWidget {
+  GamePage({Key key, @required this.gameType}) : super(key: key);
+
+  final GAME_TYPE gameType;
+
   @override
   _GamePageState createState() => _GamePageState();
 }
@@ -23,6 +29,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   Animation _animationWinner;
 
   STATUS _gameStatus = STATUS.PLAYING;
+
+  ComputerAI computerAI;
 
   List<List<int>> _board = [
     [0, 0, 0],
@@ -42,13 +50,16 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   initState() {
     super.initState();
 
+    if(widget.gameType != GAME_TYPE.TWO_PLAYERS) {
+      computerAI = new ComputerAI();
+    }
+
     _controllerBoard = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
     _controllerLine = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
     _controllerWinner = AnimationController(duration: const Duration(milliseconds: 700), vsync: this);
 
     _animationBoard =
         Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controllerBoard, curve: Curves.fastOutSlowIn));
-
     _animationLine =
         Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controllerLine, curve: Curves.fastOutSlowIn));
     _animationWinner =
@@ -95,18 +106,42 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       _turn = _whoStarted;
     });
 
+    if (_turn == -1 && widget.gameType != GAME_TYPE.TWO_PLAYERS) {
+      _computerPlay();
+    }
+
     _controllerWinner.reverse();
   }
 
+  void _computerPlay() {
+    switch (widget.gameType) {
+      case GAME_TYPE.EASY:
+        computerAI.playEasy(_board, _setMove);
+        break;
+      case GAME_TYPE.MEDIUM:
+        computerAI.playMedium(_board, _setMove);
+        break;
+      case GAME_TYPE.IMPOSSIBLE:
+        break;
+      default:
+        break;
+    }
+  }
+
   // Altera os dados da jogada indicada na posição xy para o jogador setado no _turn
-  void _setMove(int x, int y) {
-    if (_board[y][x] == 0) {
-      print("Turn " + _turn.toString() + " on x-y: " + x.toString() + "-" + y.toString());
+  void _setMove(Coordenate coordenates, WHO who) {
+    // Checa se o local está vazio e se não é um jogador tentando jogar na vez do computador
+    if (_board[coordenates.y][coordenates.x] == 0 && !(who == WHO.PLAYER && _turn == -1 && widget.gameType != GAME_TYPE.TWO_PLAYERS)) {
+      print("Turn " + _turn.toString() + " on x-y: " + coordenates.x.toString() + "-" + coordenates.y.toString());
       setState(() {
-        _board[y][x] = _turn;
+        _board[coordenates.y][coordenates.x] = _turn;
         _turn *= -1;
         _verifyWin();
       });
+
+      if (_turn == -1 && widget.gameType != GAME_TYPE.TWO_PLAYERS) {
+        _computerPlay();
+      }
     }
   }
 
@@ -124,65 +159,34 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   // Verifica se existe alguma linha com três iguais ou se não existe mais espaços vazios
   void _verifyWin() {
-    if (_board[0][0] == _board[0][1] && _board[0][0] == _board[0][2] && _board[0][0] != 0) {
-      //Horizontal superior
-      print("Horizontal superior");
-      _turn = 0;
-      _whereWon = 0;
-      _directionWon = DIRECTION_WON.HORIZONTAL;
-      _setPoint(_board[0][0]);
-      return;
-    } else if (_board[1][0] == _board[1][1] && _board[1][0] == _board[1][2] && _board[1][0] != 0) {
-      //Horizontal centro
-      print("Horizontal centro");
-      _turn = 0;
-      _whereWon = 1;
-      _directionWon = DIRECTION_WON.HORIZONTAL;
-      _setPoint(_board[1][0]);
-      return;
-    } else if (_board[2][0] == _board[2][1] && _board[2][0] == _board[2][2] && _board[2][0] != 0) {
-      //Horizontal inferior
-      print("Horizontal inferior");
-      _turn = 0;
-      _whereWon = 2;
-      _directionWon = DIRECTION_WON.HORIZONTAL;
-      _setPoint(_board[2][0]);
-      return;
-    } else if (_board[0][0] == _board[1][0] && _board[0][0] == _board[2][0] && _board[0][0] != 0) {
-      //Vertical Superior
-      print("Vertical Superior");
-      _turn = 0;
-      _whereWon = 0;
-      _directionWon = DIRECTION_WON.VERTICAL;
-      _setPoint(_board[0][0]);
-      return;
-    } else if (_board[0][1] == _board[1][1] && _board[0][1] == _board[2][1] && _board[0][1] != 0) {
-      //Vertical centro
-      print("Vertical centro");
-      _turn = 0;
-      _whereWon = 1;
-      _directionWon = DIRECTION_WON.VERTICAL;
-      _setPoint(_board[0][1]);
-      return;
-    } else if (_board[0][2] == _board[1][2] && _board[0][2] == _board[2][2] && _board[0][2] != 0) {
-      //Vertical inferior
-      print("Vertical inferior");
-      _turn = 0;
-      _whereWon = 2;
-      _directionWon = DIRECTION_WON.VERTICAL;
-      _setPoint(_board[0][2]);
-      return;
-    } else if (_board[0][0] == _board[1][1] && _board[0][0] == _board[2][2] && _board[0][0] != 0) {
-      //Diagonal 00
-      print("Diagonal 00");
+    for (int i = 0; i < 3; i++) {
+      // Verifica nas linhas horizontais
+      if (_board[i][0] + _board[i][1] + _board[i][2] == 3 || _board[i][0] + _board[i][1] + _board[i][2] == -3) {
+        _turn = 0;
+        _whereWon = i;
+        _directionWon = DIRECTION_WON.HORIZONTAL;
+        _setPoint(_board[i][0]);
+        return;
+      }
+
+      // Verifica nas linhas verticais
+      if (_board[0][i] + _board[1][i] + _board[2][i] == 3 || _board[0][i] + _board[1][i] + _board[2][i] == -3) {
+        _turn = 0;
+        _whereWon = i;
+        _directionWon = DIRECTION_WON.VERTICAL;
+        _setPoint(_board[0][i]);
+        return;
+      }
+    }
+
+    // Verifica nas linhas diagonais
+    if (_board[0][0] + _board[1][1] + _board[2][2] == 3 || _board[0][0] + _board[1][1] + _board[2][2] == -3) {
       _turn = 0;
       _whereWon = 0;
       _directionWon = DIRECTION_WON.DIAGONAL;
       _setPoint(_board[0][0]);
       return;
-    } else if (_board[2][0] == _board[1][1] && _board[0][2] == _board[2][0] && _board[2][0] != 0) {
-      //Diagonal 02
-      print("Diagonal 02");
+    } else if (_board[2][0] + _board[1][1] + _board[0][2] == 3 || _board[2][0] + _board[1][1] + _board[0][2] == -3) {
       _turn = 0;
       _whereWon = 2;
       _directionWon = DIRECTION_WON.DIAGONAL;

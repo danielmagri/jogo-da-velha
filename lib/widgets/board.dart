@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/models/coordenate.dart';
 import 'package:jogo_da_velha/widgets/x.dart';
 import 'package:jogo_da_velha/widgets/o.dart';
+import 'package:jogo_da_velha/utils/enums.dart';
 
 class Board extends AnimatedWidget {
   Board({Key key, @required this.board, @required this.setMove, Animation<double> animation})
@@ -23,9 +25,11 @@ class Board extends AnimatedWidget {
           player = O(size: 10.0);
         }
 
+        Coordenate coordenate = new Coordenate.set(x, y);
+
         areas.add(GestureDetector(
           onTap: () {
-            setMove(x, y);
+            setMove(coordenate, WHO.PLAYER);
           },
           child: new Container(
             color: Theme.of(context).backgroundColor,
