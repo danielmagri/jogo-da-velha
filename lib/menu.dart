@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:jogo_da_velha/utils/enums.dart';
 import 'package:jogo_da_velha/game.dart';
 import 'package:jogo_da_velha/difficulty.dart';
+import 'package:jogo_da_velha/about.dart';
 
 class _AnimationMenu extends StatelessWidget {
   _AnimationMenu({Key key, this.controller})
@@ -120,7 +121,12 @@ class _AnimationMenu extends StatelessWidget {
                 ]),
                 shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                 color: Theme.of(context).primaryColor,
-                onPressed: () {}),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AboutPage()),
+                  );
+                }),
           ),
         ),
       ],
